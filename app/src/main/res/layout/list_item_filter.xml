@@ -31,6 +31,7 @@
         android:layout_toLeftOf="@android:id/button1"
         android:layout_toStartOf="@android:id/button1"
         android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
         android:textSize="16sp"
         tools:text="ALKJFOWIEUKCXJ.txt"
         android:maxLines="1" />

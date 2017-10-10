@@ -79,23 +79,23 @@
     <color name="tag_color_16">#FFCC3399</color>
     <color name="tag_color_17">#FFFFCC99</color>
 
-    <color name="light_tag_color_01">#FF5b39c6</color>
-    <color name="light_tag_color_02">#FFcc9900</color>
-    <color name="light_tag_color_03">#FF3366ff</color>
-    <color name="light_tag_color_04">#FF006600</color>
-    <color name="light_tag_color_05">#FF990000</color>
-    <color name="light_tag_color_06">#FF000066</color>
-    <color name="light_tag_color_07">#FFff33ff</color>
-    <color name="light_tag_color_08">#FF993300</color>
-    <color name="light_tag_color_09">#FFff3366</color>
-    <color name="light_tag_color_10">#FF0099cc</color>
+    <color name="light_tag_color_01">#673ab7</color>
+    <color name="light_tag_color_02">#fb8c00</color>
+    <color name="light_tag_color_03">#2962ff</color>
+    <color name="light_tag_color_04">#1b5e20</color>
+    <color name="light_tag_color_05">#b71c1c</color>
+    <color name="light_tag_color_06">#1a237e</color>
+    <color name="light_tag_color_07">#e040fb</color>
+    <color name="light_tag_color_08">#bf360c</color>
+    <color name="light_tag_color_09">#ff4081</color>
+    <color name="light_tag_color_10">#0288d1</color>
     <color name="light_tag_color_11">#FF000000</color>
-    <color name="light_tag_color_12">#FF333300</color>
-    <color name="light_tag_color_13">#FF0000ff</color>
-    <color name="light_tag_color_14">#FFff6633</color>
-    <color name="light_tag_color_15">#FF6666ff</color>
-    <color name="light_tag_color_16">#FF33cc66</color>
-    <color name="light_tag_color_17">#FF003366</color>
+    <color name="light_tag_color_12">#3e2723</color>
+    <color name="light_tag_color_13">#6200ea</color>
+    <color name="light_tag_color_14">#ff6e40</color>
+    <color name="light_tag_color_15">#536dfe</color>
+    <color name="light_tag_color_16">#4caf50</color>
+    <color name="light_tag_color_17">#1a237e</color>
 
     <color name="android_theme_tag_color_01">#FF222222</color>
     <color name="android_theme_tag_color_02">#FF996666</color>
@@ -115,8 +115,8 @@
     <color name="android_theme_tag_color_16">#FFCC3399</color>
     <color name="android_theme_tag_color_17">#FFFFCC00</color>
 
-    <color name="primary">#F44336</color>
-    <color name="primary_dark">#D32F2F</color>
+    <color name="primary">#ffffff</color>
+    <color name="primary_dark">#bdbdbd</color>
     <color name="accent">#448AFF</color>
 
 

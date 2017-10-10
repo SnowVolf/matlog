@@ -10,8 +10,8 @@
     <string name="add_filter_ellipsis">Добавить фильр…</string>
 
     <plurals name="are_you_sure">
-        <item quantity="one">%d file will be deleted</item>
-        <item quantity="other">%d files will be deleted</item>
+        <item quantity="one">%d файл будет удалён</item>
+        <item quantity="other">%d файл будет удалён</item>
         <item quantity="few">%d файлов будет удалёно</item>
         <item quantity="many">%d файлов будет удалёно</item>
     </plurals>
@@ -34,7 +34,7 @@
     <string name="dialog_for_donate">For <b>bonus color\nschemes</b>, download\n<a href="market://details?id=com.pluscubed.logcat.donate">MatLog Donate</a></string>
     <string name="dialog_for_widget">For a <b>widget</b>,\ndo Home → Long\npress → Widgets</string>
     <string name="dialog_initializing_recorder">Загрузка рекордера…</string>
-    <string name="dialog_loading_updates">Загрузка обновлений…</string>
+    <string name="dialog_loading_updates">Обновление…</string>
     <string name="dialog_partial_select_explanation">1. Выберите <b>первую</b> линию.\n2. Теперь выберите <b>последнюю</b> линию.</string>
     <string name="dialog_please_wait">Пожалуйста, подождите</string>
 
@@ -48,7 +48,7 @@
         <item quantity="many">%d файлов будет удалёно</item>
     </plurals>
 
-    <string name="filter_choice">Поиск по...</string>
+    <string name="filter_choice">Поиск по…</string>
     <string name="filter_choice_pid">PID</string>
     <string name="filter_choice_tag">Тег</string>
     <string name="filter_text_colon">Фильтр текста:</string>
@@ -183,6 +183,6 @@
 
     <string name="permission_not_granted">Эта функция не будет работать без разрешения на запись во внутр. накопитель</string>
     <string name="search">Поиск</string>
-    <string name="scrubber">Omit sensitive info</string>
-    <string name="scrubber_summary">Omit sensitive info like web urls, phone numbers or emails</string>
+    <string name="scrubber">Скрыть личную информацию</string>
+    <string name="scrubber_summary">Скрыть личную информацию (web адреса, email, номера телефонов и т.д.)</string>
 </resources>
