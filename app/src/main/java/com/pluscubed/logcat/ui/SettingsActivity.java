@@ -1,5 +1,6 @@
 package com.pluscubed.logcat.ui;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -11,8 +12,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -30,13 +30,13 @@ import com.pluscubed.logcat.widget.MultipleChoicePreference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(toolbar);
 
         FragmentManager fm = getFragmentManager();
@@ -112,6 +112,8 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         private void setUpPreferences() {
+            setCurrentValue(getString(R.string.pref_theme));
+            setCurrentValue(getString(R.string.pref_main_theme));
 
             displayLimitPreference = (EditTextPreference) findPreference(getString(R.string.pref_display_limit));
 
@@ -139,7 +141,7 @@ public class SettingsActivity extends AppCompatActivity {
             defaultLevelPreference.setOnPreferenceChangeListener(this);
             setDefaultLevelPreferenceSummary(defaultLevelPreference.getEntry());
 
-            mThemePreference = findPreference(getString(R.string.pref_theme));
+            mThemePreference = findPreference(getString(R.string.pref_main_theme));
             mThemePreference.setOnPreferenceChangeListener(this);
 
             bufferPreference = (MultipleChoicePreference) findPreference(getString(R.string.pref_buffer));
@@ -148,28 +150,18 @@ public class SettingsActivity extends AppCompatActivity {
 
             boolean donateInstalled = PackageHelper.isCatlogDonateInstalled(getActivity());
 
-            String themeSummary = PreferenceHelper.getColorScheme(getActivity()).getDisplayableName(getActivity());
+            //String themeSummary = PreferenceHelper.getColorScheme(getActivity()).getDisplayableName(getActivity());
 
-            mThemePreference.setSummary(themeSummary);
-            mThemePreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    //TODO: Implement themes using color picker and remove this
-                    Snackbar.make(getActivity().findViewById(android.R.id.content),
-                            "Themes are not implemented yet. Stay tuned for updates!", Snackbar.LENGTH_LONG)
-                            .show();
-                    return true;
-                }
-            });
+            //mThemePreference.setSummary(themeSummary);
+            mThemePreference.setOnPreferenceChangeListener(this);
 
             mAboutPreference = findPreference(getString(R.string.pref_about));
             mAboutPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    // launch about activity
-                    Intent intent = new Intent(getActivity(), AboutDialogActivity.class);
-                    startActivity(intent);
+                    DialogFragment fragment = new AboutDialogFragment().newInstance();
+                    fragment.show(getFragmentManager(), "aboutDialog");
                     return true;
                 }
             });
@@ -239,17 +231,11 @@ public class SettingsActivity extends AppCompatActivity {
 
                 } catch (NumberFormatException ignore) {
                 }
-
-
                 Toast.makeText(getActivity(), R.string.pref_log_line_period_error, Toast.LENGTH_LONG).show();
                 return false;
 
             } else if (preference.getKey().equals(getString(R.string.pref_theme))) {
-                // update summary
-                /*int index = ArrayUtil.indexOf(mThemePreference.getEntryValues(), newValue.toString());
-                CharSequence newEntry = mThemePreference.getEntries()[index];
-                mThemePreference.setSummary(newEntry);*/
-
+                setCurrentValue(preference.getKey());
                 return true;
             } else if (preference.getKey().equals(getString(R.string.pref_buffer))) {
                 // buffers pref
@@ -277,9 +263,12 @@ public class SettingsActivity extends AppCompatActivity {
                 int index = ArrayUtil.indexOf(listPreference.getEntryValues(), newValue);
                 CharSequence newEntry = listPreference.getEntries()[index];
                 setDefaultLevelPreferenceSummary(newEntry);
-
                 return true;
 
+            } else if (preference.getKey().equals(getString(R.string.pref_main_theme))){
+                setCurrentValue(preference.getKey());
+                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent("org.openintents.action.REFRESH_THEME"));
+                return true;
             } else { // text size pref
 
                 // update the summary to reflect changes
@@ -292,7 +281,6 @@ public class SettingsActivity extends AppCompatActivity {
 
                 return true;
             }
-
         }
 
 
@@ -300,7 +288,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             String[] commaSeparated = StringUtil.split(StringUtil.nullToEmpty(value), MultipleChoicePreference.DELIMITER);
 
-            List<CharSequence> checkedEntries = new ArrayList<CharSequence>();
+            List<CharSequence> checkedEntries = new ArrayList<>();
 
             for (String entryValue : commaSeparated) {
                 int idx = ArrayUtil.indexOf(bufferPreference.getEntryValues(), entryValue);
@@ -314,6 +302,11 @@ public class SettingsActivity extends AppCompatActivity {
                 summary += getString(R.string.simultaneous);
             }
             bufferPreference.setSummary(summary);
+        }
+
+        private void setCurrentValue(String key){
+            ListPreference preference = (ListPreference) findPreference(key);
+            preference.setSummary(preference.getEntry());
         }
     }
 }

@@ -3,24 +3,24 @@
     <color name="imageBackground">#DDFFFFFF</color>
     <color name="imageBorder">#FF333333</color>
 
-    <color name="orange1">#FFf26700</color>
-    <color name="orange2">#FFff9000</color>
-    <color name="yellow1">#FFfbad00</color>
-    <color name="yellow2">#FFffc600</color>
+    <color name="orange1">#ef6c00</color>
+    <color name="orange2">#ff8f00</color>
+    <color name="yellow1">#ffab00</color>
+    <color name="yellow2">#ffc400</color>
 
     <color name="action_bar_start">#FFFBFBFB</color>
     <color name="action_bar_end">#FFCCCCCC</color>
 
-    <color name="linkColorBlue">#0099dd</color>
+    <color name="linkColorBlue">#039be5</color>
 
     <color name="dark_divider">#33cccccc</color>
 
-    <color name="background_wtf">#FF999900</color>
-    <color name="background_error">#FFCC0000</color>
-    <color name="background_verbose">#FF666666</color>
-    <color name="background_debug">#FF0066CC</color>
-    <color name="background_info">#FF00CC00</color>
-    <color name="background_warn">#FFFFFF00</color>
+    <color name="background_wtf">#9e9d24</color>
+    <color name="background_error">#d50000</color>
+    <color name="background_verbose">#616161</color>
+    <color name="background_debug">#1565c0</color>
+    <color name="background_info">#00c853</color>
+    <color name="background_warn">#ffea00</color>
 
     <color name="main_bubble_background_dark">#44FFFFFF</color>
     <color name="main_bubble_background_dark_2">#55BBBBFF</color>
@@ -29,13 +29,13 @@
     <color name="main_bubble_background_tmobile">#33333333</color>
     <color name="main_bubble_background_verizon">#FFEEEEEE</color>
 
-    <color name="main_background_dark">#FF000000</color>
-    <color name="main_background_light">#FFFFFFEE</color>
-    <color name="main_background_android">#FFA4C639</color>
-    <color name="main_background_verizon">#FF000000</color>
+    <color name="main_background_dark">#FF141414</color>
+    <color name="main_background_light">#f5f5f5</color>
+    <color name="main_background_android">#afb42b</color>
+    <color name="main_background_verizon">#000000</color>
     <color name="main_background_att">#FFFFFFFF</color>
     <color name="main_background_sprint">#FF000000</color>
-    <color name="main_background_tmobile">#FFeaeff3</color>
+    <color name="main_background_tmobile">#eceff1</color>
 
     <color name="main_foreground_dark">@android:color/darker_gray</color>
     <color name="main_foreground_light">@android:color/black</color>
@@ -47,37 +47,37 @@
 
     <color name="spinner_droptown_dark">#FF333333</color>
     <color name="spinner_droptown_light">#00000000</color>
-    <color name="spinner_droptown_android">#FFA4C639</color>
+    <color name="spinner_droptown_android">#afb42b</color>
     <color name="spinner_droptown_verizon">#FF333333</color>
     <color name="spinner_droptown_att">#00000000</color>
-    <color name="spinner_droptown_sprint">#FF333333</color>
+    <color name="spinner_droptown_sprint">#263238</color>
     <color name="spinner_droptown_tmobile">#00000000</color>
 
-    <color name="foreground_wtf">#FFFFFFFF</color>
+    <color name="foreground_wtf">#ffffff</color>
     <color name="foreground_error">#FFFFFFFF</color>
-    <color name="foreground_verbose">#FFCCCCCC</color>
-    <color name="foreground_debug">#FFCCCCCC</color>
-    <color name="foreground_info">#FF333333</color>
-    <color name="foreground_warn">#FF333333</color>
+    <color name="foreground_verbose">#d7ccc8</color>
+    <color name="foreground_debug">#d7ccc8</color>
+    <color name="foreground_info">#263238</color>
+    <color name="foreground_warn">#212121</color>
 
     <!-- Android color FTW -->
-    <color name="tag_color_01">#FFA4C639</color>
-    <color name="tag_color_02">#FF3366FF</color>
-    <color name="tag_color_03">#FFCC9900</color>
-    <color name="tag_color_04">#FFCC0000</color>
-    <color name="tag_color_05">#FFCCCCCC</color>
-    <color name="tag_color_06">#FF990099</color>
-    <color name="tag_color_07">#FF00CC00</color>
-    <color name="tag_color_08">#FF66CCFF</color>
-    <color name="tag_color_09">#FF00CC99</color>
-    <color name="tag_color_10">#FFFF6633</color>
-    <color name="tag_color_11">#FFFFFFFF</color>
-    <color name="tag_color_12">#FFCCCCFF</color>
-    <color name="tag_color_13">#FFFFFF00</color>
-    <color name="tag_color_14">#FF0099CC</color>
-    <color name="tag_color_15">#FF999900</color>
-    <color name="tag_color_16">#FFCC3399</color>
-    <color name="tag_color_17">#FFFFCC99</color>
+    <color name="tag_color_01">#afb42b</color>
+    <color name="tag_color_02">#2962ff</color>
+    <color name="tag_color_03">#fb8c00</color>
+    <color name="tag_color_04">#d50000</color>
+    <color name="tag_color_05">#d7ccc8</color>
+    <color name="tag_color_06">#8e24aa</color>
+    <color name="tag_color_07">#00c853</color>
+    <color name="tag_color_08">#4fc3f7</color>
+    <color name="tag_color_09">#00bfa5</color>
+    <color name="tag_color_10">#ff6e40</color>
+    <color name="tag_color_11">#ffffff</color>
+    <color name="tag_color_12">#c5cae9</color>
+    <color name="tag_color_13">#ffea00</color>
+    <color name="tag_color_14">#0288d1</color>
+    <color name="tag_color_15">#9e9d24</color>
+    <color name="tag_color_16">#ec407a</color>
+    <color name="tag_color_17">#ffcc80</color>
 
     <color name="light_tag_color_01">#673ab7</color>
     <color name="light_tag_color_02">#fb8c00</color>
@@ -97,27 +97,43 @@
     <color name="light_tag_color_16">#4caf50</color>
     <color name="light_tag_color_17">#1a237e</color>
 
-    <color name="android_theme_tag_color_01">#FF222222</color>
-    <color name="android_theme_tag_color_02">#FF996666</color>
-    <color name="android_theme_tag_color_03">#FFFFCC99</color>
-    <color name="android_theme_tag_color_04">#FFCC0000</color>
-    <color name="android_theme_tag_color_05">#FF666633</color>
-    <color name="android_theme_tag_color_06">#FF990099</color>
-    <color name="android_theme_tag_color_07">#FF006600</color>
-    <color name="android_theme_tag_color_08">#FF660066</color>
-    <color name="android_theme_tag_color_09">#FF003399</color>
-    <color name="android_theme_tag_color_10">#FFFF6633</color>
-    <color name="android_theme_tag_color_11">#FFFFFFFF</color>
-    <color name="android_theme_tag_color_12">#FFCC3333</color>
-    <color name="android_theme_tag_color_13">#FFFFFF00</color>
-    <color name="android_theme_tag_color_14">#FF0099CC</color>
-    <color name="android_theme_tag_color_15">#FF009933</color>
-    <color name="android_theme_tag_color_16">#FFCC3399</color>
-    <color name="android_theme_tag_color_17">#FFFFCC00</color>
+    <color name="android_theme_tag_color_01">#212121</color>
+    <color name="android_theme_tag_color_02">#8d6e63</color>
+    <color name="android_theme_tag_color_03">#ffcc80</color>
+    <color name="android_theme_tag_color_04">#d50000</color>
+    <color name="android_theme_tag_color_05">#795548</color>
+    <color name="android_theme_tag_color_06">#8e24aa</color>
+    <color name="android_theme_tag_color_07">#1b5e20</color>
+    <color name="android_theme_tag_color_08">#880e4f</color>
+    <color name="android_theme_tag_color_09">#0d47a1</color>
+    <color name="android_theme_tag_color_10">#ff6e40</color>
+    <color name="android_theme_tag_color_11">#ffffff</color>
+    <color name="android_theme_tag_color_12">#d32f2f</color>
+    <color name="android_theme_tag_color_13">#ffea00</color>
+    <color name="android_theme_tag_color_14">#0288d1</color>
+    <color name="android_theme_tag_color_15">#388e3c</color>
+    <color name="android_theme_tag_color_16">#ec407a</color>
+    <color name="android_theme_tag_color_17">#ffc400</color>
 
-    <color name="primary">#ffffff</color>
-    <color name="primary_dark">#bdbdbd</color>
-    <color name="accent">#448AFF</color>
+    <color name="ic_launcher_background">#fafafa</color>
+    
+    <!-- light app theme -->
+    <color name="light_primary">#ffffff</color>
+    <color name="light_primary_dark">#bdbdbd</color>
+    <color name="light_accent">#448AFF</color>
 
+    <!-- dark app theme -->
+    <color name="dark_primary">#212121</color>
+    <color name="dark_primary_dark">#151515</color>
+    <color name="dark_accent">#448AFF</color>
+    <color name="dark_window_background">#141414</color>
+
+    <!-- black app theme -->
+    <color name="black_primary">#141414</color>
+    <color name="black_primary_dark">#000</color>
+    <color name="black_accent">#448AFF</color>
+    <color name="black_window_background">#080808</color>
+
+    <color name="fast_scroller_background">#9b448aff</color>
 
 </resources>

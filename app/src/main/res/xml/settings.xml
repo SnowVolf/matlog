@@ -4,6 +4,28 @@
     <PreferenceCategory android:title="@string/pref_cat_appearance">
 
         <com.afollestad.materialdialogs.prefs.MaterialListPreference
+            android:defaultValue="0"
+            android:entries="@array/theme_names"
+            android:entryValues="@array/theme_values"
+            android:key="@string/pref_main_theme"
+            android:persistent="true"
+            android:title="@string/pref_theme_title" />
+
+        <com.afollestad.materialdialogs.prefs.MaterialListPreference
+            android:defaultValue="@string/pref_theme_choice_light_value"
+            android:entries="@array/pref_theme_choices_names"
+            android:entryValues="@array/pref_theme_choices_values"
+            android:key="@string/pref_theme"
+            android:persistent="true"
+            android:title="@string/pref_scheme_title" />
+
+        <CheckBoxPreference
+            android:key="@string/pref_fast_scroller"
+            android:title="@string/fast_scroller"
+            android:persistent="true"
+            android:defaultValue="true"/>
+
+        <com.afollestad.materialdialogs.prefs.MaterialListPreference
             android:defaultValue="@string/text_size_medium_value"
             android:entries="@array/text_sizes"
             android:entryValues="@array/text_size_values"
@@ -24,15 +46,6 @@
             android:persistent="true"
             android:summary="@string/pref_show_timestamp_summary"
             android:title="@string/pref_show_timestamp_title" />
-
-        <Preference
-            android:defaultValue="@string/pref_theme_choice_dark_value"
-            android:entries="@array/pref_theme_choices_names"
-            android:entryValues="@array/pref_theme_choices_values"
-            android:key="@string/pref_theme"
-            android:persistent="true"
-            android:title="@string/pref_theme_title" />
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_cat_configuration">

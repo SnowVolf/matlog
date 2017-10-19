@@ -17,6 +17,7 @@ public class LogLineViewHolder extends RecyclerView.ViewHolder implements PopupM
     // id for context menu entry
     public static final int CONTEXT_MENU_FILTER_ID = 0;
     public static final int CONTEXT_MENU_COPY_ID = 1;
+    public static final int CONTEXT_MENU_COPY_MSG_ID = 2;
 
     final ListItemLogcatBinding binding;
     LogLine logLine;
@@ -43,6 +44,7 @@ public class LogLineViewHolder extends RecyclerView.ViewHolder implements PopupM
         PopupMenu menu = new PopupMenu(v.getContext(), v);
         menu.getMenu().add(0, CONTEXT_MENU_FILTER_ID, 0, R.string.filter_choice);
         menu.getMenu().add(0, CONTEXT_MENU_COPY_ID, 0, R.string.copy_to_clipboard);
+        menu.getMenu().add(0, CONTEXT_MENU_COPY_MSG_ID, 0, R.string.copy_msg_to_clipboard);
         menu.setOnMenuItemClickListener(LogLineViewHolder.this);
         menu.show();
         return true;

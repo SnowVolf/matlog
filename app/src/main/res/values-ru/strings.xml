@@ -106,7 +106,7 @@
     <string name="pref_theme_choice_tmobile_name">T-Mo</string>
     <string name="pref_theme_choice_verizon_name">Big Red</string>
     <string name="pref_theme_summary_free">Требуется платная версия.</string>
-    <string name="pref_theme_title">Цветовая схема</string>
+    <string name="pref_scheme_title">Цветовая схема</string>
 
     <string name="record_log">Записать лог</string>
 
@@ -185,4 +185,11 @@
     <string name="search">Поиск</string>
     <string name="scrubber">Скрыть личную информацию</string>
     <string name="scrubber_summary">Скрыть личную информацию (web адреса, email, номера телефонов и т.д.)</string>
+
+    <string name="pref_app_theme_light">Светлая</string>
+    <string name="pref_app_theme_dark">Тёмная</string>
+    <string name="pref_app_theme_black">Чёрная</string>
+    <string name="pref_theme_title">Тема</string>
+    <string name="copy_msg_to_clipboard">Копир-ть сообщ.</string>
+    <string name="fast_scroller">Быстрая прокрутка</string>
 </resources>

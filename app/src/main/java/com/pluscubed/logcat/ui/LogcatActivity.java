@@ -23,10 +23,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -34,7 +36,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -46,6 +47,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filter.FilterListener;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -81,7 +83,9 @@ import com.pluscubed.logcat.reader.LogcatReaderLoader;
 import com.pluscubed.logcat.util.ArrayUtil;
 import com.pluscubed.logcat.util.LogLineAdapterUtil;
 import com.pluscubed.logcat.util.StringUtil;
+import com.pluscubed.logcat.util.Util;
 import com.pluscubed.logcat.util.UtilLogger;
+import com.pluscubed.logcat.widget.FastScroller;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -93,17 +97,18 @@ import java.util.Locale;
 import java.util.Set;
 
 import static com.pluscubed.logcat.data.LogLineViewHolder.CONTEXT_MENU_COPY_ID;
+import static com.pluscubed.logcat.data.LogLineViewHolder.CONTEXT_MENU_COPY_MSG_ID;
 import static com.pluscubed.logcat.data.LogLineViewHolder.CONTEXT_MENU_FILTER_ID;
 
 
-public class LogcatActivity extends AppCompatActivity implements FilterListener, LogLineViewHolder.OnClickListener {
+public class LogcatActivity extends BaseActivity implements FilterListener, LogLineViewHolder.OnClickListener {
 
     private static final int REQUEST_CODE_SETTINGS = 1;
 
     // how often to check to see if we've gone over the max size
     private static final int UPDATE_CHECK_INTERVAL = 200;
 
-    // how many suggestions to keep in the autosuggestions text
+    // how many suggestions to keep in the auto suggestions text
     private static final int MAX_NUM_SUGGESTIONS = 1000;
 
     // id requests for access to sdcard
@@ -138,6 +143,8 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
     private MenuItem mSearchViewMenuItem;
 
     private ActivityLogcatBinding binding;
+
+    private FastScroller fastScroller;
 
     public static void startChooser(Context context, String subject, String body, SendLogDetails.AttachmentType attachmentType, File attachment) {
 
@@ -202,10 +209,11 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
 
         mHandler = new Handler(Looper.getMainLooper());
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
+        binding.refresh.setColorSchemeColors(0x448aff, 0xd50000, 0x4caf50);
+        binding.refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View v) {
-                DialogHelper.stopRecordingLog(LogcatActivity.this);
+            public void onRefresh() {
+                binding.refresh.setRefreshing(false);
             }
         });
 
@@ -225,10 +233,95 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
                 new String[]{"suggestion"},
                 new int[]{android.R.id.text1},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
+        setUpBar();
         setUpAdapter();
         updateBackgroundColor();
         runUpdatesIfNecessaryAndShowWelcomeMessage();
+    }
+
+    private void setUpBar() {
+        binding.btnStartPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pauseOrUnpause((ImageButton) view);
+            }
+        });
+        binding.btnExpandCollapse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                expandOrCollapseAll(true);
+                binding.btnExpandCollapse.setImageResource(mCollapsedMode ?
+                        R.drawable.ic_expand_more_white_24dp : R.drawable.ic_expand_less_white_24dp);
+            }
+        });
+        binding.btnClearLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mLogListAdapter != null) {
+                    mLogListAdapter.clear();
+                }
+                Snackbar.make(findViewById(android.R.id.content), R.string.log_cleared, Snackbar.LENGTH_LONG)
+                        .setAction(getString(R.string.undo), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startMainLog();
+                            }
+                        })
+                        .setActionTextColor(ContextCompat.getColor(LogcatActivity.this, R.color.light_accent))
+                        .show();
+            }
+        });
+        binding.btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showMenu(view);
+            }
+        });
+    }
+
+    private void showMenu(View v) {
+        PopupMenu popup = new PopupMenu(v.getContext(), v);
+        popup.inflate(R.menu.menu_popup_main);
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.menu_log_level:
+                        showLogLevelDialog();
+                        return true;
+                    case R.id.menu_open_log:
+                        showOpenLogFileDialog();
+                        return true;
+                    case R.id.menu_save_log:
+                    case R.id.menu_save_as_log:
+                        showSaveLogDialog();
+                        return true;
+                    case R.id.menu_send_log:
+                        showSendLogDialog();
+                        return true;
+                    case R.id.menu_delete_saved_log:
+                        startDeleteSavedLogsDialog();
+                        return true;
+                    case R.id.menu_settings:
+                        startSettingsActivity();
+                        return true;
+                    case R.id.menu_crazy_logger_service:
+                        ServiceHelper.startOrStopCrazyLogger(LogcatActivity.this);
+                        return true;
+                    case R.id.menu_partial_select:
+                        startPartialSelectMode();
+                        return true;
+                    case R.id.menu_filters:
+                        showFiltersDialog();
+                        return true;
+                }
+                return false;
+            }
+        });
+        onPreparePopupMenu(popup.getMenu());
+        MenuPopupHelper menuHelper = new MenuPopupHelper(this, (MenuBuilder) popup.getMenu(), v);
+        menuHelper.setForceShowIcon(true);
+        menuHelper.show();
     }
 
     private void handleShortcuts(String action) {
@@ -360,13 +453,38 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
     public void onResume() {
         super.onResume();
 
+        if (PreferenceHelper.isFastScrollEnabled() && fastScroller == null){
+            fastScroller = new FastScroller(binding.list);
+        }
+
         if (mLogListAdapter.getItemCount() > 0) {
             // scroll to bottom, since for some reason it always scrolls to the top, which is annoying
             scrollToBottom();
         }
 
         boolean recordingInProgress = ServiceHelper.checkIfServiceIsRunning(getApplicationContext(), LogcatRecordingService.class);
-        binding.fab.setVisibility(recordingInProgress ? View.VISIBLE : View.GONE);
+        binding.btnRecordStop.setImageResource(recordingInProgress ? R.drawable.ic_stop_white_24dp : R.drawable.ic_record_white_24dp);
+        Util.setVisibility(recordingInProgress, binding.btnRecordStop);
+        Util.setVisibility(recordingInProgress, binding.btnStartPause);
+        if (recordingInProgress) {
+            binding.btnRecordStop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogHelper.stopRecordingLog(LogcatActivity.this);
+                }
+            });
+        } else {
+            try {
+                binding.btnRecordStop.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showRecordLogDialog();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void restartMainLog() {
@@ -441,7 +559,7 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
         if (mTask != null) {
             // do only after current log is depleted, to avoid splicing the streams together
             // (Don't cross the streams!)
-            mTask.unpause();
+            mTask.unPause();
             mTask.setOnFinished(mainLogRunnable);
             mTask.killReader();
             mTask = null;
@@ -465,7 +583,7 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
         log.d("onDestroy() called");
 
         if (mTask != null) {
-            mTask.unpause();
+            mTask.unPause();
             mTask.killReader();
             mTask = null;
         }
@@ -506,25 +624,25 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
         }
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+
+    public boolean onPreparePopupMenu(Menu menu) {
         invalidateDarkOrLightMenuItems(this, menu);
 
         boolean showingMainLog = (mTask != null);
 
-        MenuItem item = menu.findItem(R.id.menu_expand_all);
-        if (mCollapsedMode) {
-            item.setIcon(R.drawable.ic_expand_more_white_24dp);
-            item.setTitle(R.string.expand_all);
-        } else {
-            item.setIcon(R.drawable.ic_expand_less_white_24dp);
-            item.setTitle(R.string.collapse_all);
-        }
-
-        MenuItem clear = menu.findItem(R.id.menu_clear);
-        MenuItem pause = menu.findItem(R.id.menu_play_pause);
-        clear.setVisible(mCurrentlyOpenLog == null);
-        pause.setVisible(mCurrentlyOpenLog == null);
+//        MenuItem item = menu.findItem(R.id.menu_expand_all);
+//        if (mCollapsedMode) {
+//            item.setIcon(R.drawable.ic_expand_more_white_24dp);
+//            item.setTitle(R.string.expand_all);
+//        } else {
+//            item.setIcon(R.drawable.ic_expand_less_white_24dp);
+//            item.setTitle(R.string.collapse_all);
+//        }
+//
+//        MenuItem clear = menu.findItem(R.id.menu_clear);
+//        MenuItem pause = menu.findItem(R.id.menu_play_pause);
+//        clear.setVisible(mCurrentlyOpenLog == null);
+//        pause.setVisible(mCurrentlyOpenLog == null);
 
         MenuItem saveLogMenuItem = menu.findItem(R.id.menu_save_log);
         MenuItem saveAsLogMenuItem = menu.findItem(R.id.menu_save_as_log);
@@ -534,13 +652,10 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
 
         saveAsLogMenuItem.setEnabled(!showingMainLog);
         saveAsLogMenuItem.setVisible(!showingMainLog);
-
-        boolean recordingInProgress = ServiceHelper.checkIfServiceIsRunning(getApplicationContext(), LogcatRecordingService.class);
-
-        MenuItem recordMenuItem = menu.findItem(R.id.menu_record_log);
-
-        recordMenuItem.setEnabled(!recordingInProgress);
-        recordMenuItem.setVisible(!recordingInProgress);
+//        MenuItem recordMenuItem = menu.findItem(R.id.menu_record_log);
+//
+//        recordMenuItem.setEnabled(!recordingInProgress);
+//        recordMenuItem.setVisible(!recordingInProgress);
 
         MenuItem crazyLoggerMenuItem = menu.findItem(R.id.menu_crazy_logger_service);
         crazyLoggerMenuItem.setEnabled(UtilLogger.DEBUG_MODE);
@@ -555,8 +670,7 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
 
         //used to workaround issue where the search text is cleared on expanding the SearchView
 
@@ -606,60 +720,8 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_play_pause:
-                pauseOrUnpause(item);
-                return true;
-            case R.id.menu_expand_all:
-                expandOrCollapseAll(true);
-                return true;
-            case R.id.menu_clear:
-                if (mLogListAdapter != null) {
-                    mLogListAdapter.clear();
-                }
-                Snackbar.make(findViewById(android.R.id.content), R.string.log_cleared, Snackbar.LENGTH_LONG)
-                        .setAction(getString(R.string.undo), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startMainLog();
-                            }
-                        })
-                        .setActionTextColor(ContextCompat.getColor(this, R.color.accent))
-                        .show();
-                return true;
-
-            case R.id.menu_log_level:
-                showLogLevelDialog();
-                return true;
-            case R.id.menu_open_log:
-                showOpenLogFileDialog();
-                return true;
-            case R.id.menu_save_log:
-            case R.id.menu_save_as_log:
-                showSaveLogDialog();
-                return true;
-            case R.id.menu_record_log:
-                showRecordLogDialog();
-                return true;
-            case R.id.menu_send_log:
-                showSendLogDialog();
-                return true;
             case android.R.id.home:
                 onBackPressed();
-                return true;
-            case R.id.menu_delete_saved_log:
-                startDeleteSavedLogsDialog();
-                return true;
-            case R.id.menu_settings:
-                startSettingsActivity();
-                return true;
-            case R.id.menu_crazy_logger_service:
-                ServiceHelper.startOrStopCrazyLogger(this);
-                return true;
-            case R.id.menu_partial_select:
-                startPartialSelectMode();
-                return true;
-            case R.id.menu_filters:
-                showFiltersDialog();
                 return true;
         }
         return false;
@@ -684,6 +746,12 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
 
                     showSearchByDialog(logLine);
                     return true;
+                case CONTEXT_MENU_COPY_MSG_ID:{
+                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    cm.setPrimaryClip(ClipData.newPlainText(null, logLine.getLogOutput()));
+                    Toast.makeText(this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                    return true;
+                }
             }
         }
         return false;
@@ -722,16 +790,16 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
                 .show();
 
         LinearLayout customView = (LinearLayout) dialog.getCustomView();
-        LinearLayout tag = (LinearLayout) customView.findViewById(R.id.dialog_searchby_tag_linear);
-        LinearLayout pid = (LinearLayout) customView.findViewById(R.id.dialog_searchby_pid_linear);
+        LinearLayout tag = customView.findViewById(R.id.dialog_searchby_tag_linear);
+        LinearLayout pid = customView.findViewById(R.id.dialog_searchby_pid_linear);
 
-        TextView tagText = (TextView) customView.findViewById(R.id.dialog_searchby_tag_text);
-        TextView pidText = (TextView) customView.findViewById(R.id.dialog_searchby_pid_text);
+        TextView tagText = customView.findViewById(R.id.dialog_searchby_tag_text);
+        TextView pidText = customView.findViewById(R.id.dialog_searchby_pid_text);
 
         ColorScheme colorScheme = PreferenceHelper.getColorScheme(this);
 
         tagText.setText(logLine.getTag());
-        pidText.setText(Integer.toString(logLine.getProcessId()));
+        pidText.setText(String.format(Locale.ENGLISH, "%d", logLine.getProcessId()));
         tagText.setTextColor(tagColor);
         pidText.setTextColor(colorScheme.getForegroundColor(this));
 
@@ -774,11 +842,8 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
         }
         // start up the dialog-like activity
         String[] suggestions = ArrayUtil.toArray(new ArrayList<>(mSearchSuggestionsSet), String.class);
-
-        Intent intent = new Intent(LogcatActivity.this, RecordLogDialogActivity.class);
-        intent.putExtra(RecordLogDialogActivity.EXTRA_QUERY_SUGGESTIONS, suggestions);
-
-        startActivity(intent);
+        RecordLogDialogFragment dialogFragment = RecordLogDialogFragment.newInstance(suggestions);
+        dialogFragment.show(getFragmentManager(), "showRecordLogDialog");
     }
 
     private void showFiltersDialog() {
@@ -940,7 +1005,7 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
             // don't show the scroll bar
             helpView.setVerticalScrollBarEnabled(false);
             helpView.setHorizontalScrollBarEnabled(false);
-            final CheckBox checkBox = (CheckBox) helpView.findViewById(android.R.id.checkbox);
+            final CheckBox checkBox = helpView.findViewById(android.R.id.checkbox);
 
             new MaterialDialog.Builder(this)
                     .title(R.string.menu_title_partial_select)
@@ -1026,7 +1091,7 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
 
         @SuppressLint("InflateParams") LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_delete_logfiles, null);
 
-        ListView view = (ListView) layout.findViewById(R.id.list);
+        ListView view = layout.findViewById(R.id.list);
         view.setAdapter(logFileAdapter);
 
         MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
@@ -1125,7 +1190,7 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("InflateParams") View includeDeviceInfoView = inflater.inflate(R.layout.dialog_send_log, null, false);
-        final CheckBox includeDeviceInfoCheckBox = (CheckBox) includeDeviceInfoView.findViewById(android.R.id.checkbox);
+        final CheckBox includeDeviceInfoCheckBox = includeDeviceInfoView.findViewById(android.R.id.checkbox);
 
         // allow user to choose whether or not to include device info in report, use preferences for persistence
         includeDeviceInfoCheckBox.setChecked(PreferenceHelper.getIncludeDeviceInfoPreference(this));
@@ -1137,7 +1202,7 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
             }
         });
 
-        new android.app.AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle(R.string.send_log_title)
                 .setView(includeDeviceInfoView)
                 .setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
@@ -1445,6 +1510,9 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
                 super.onPreExecute();
                 resetDisplayedLog(filename);
 
+                boolean recordingInProgress = ServiceHelper.checkIfServiceIsRunning(getApplicationContext(), LogcatRecordingService.class);
+                Util.setVisibility(recordingInProgress, binding.btnRecordStop);
+                Util.setVisibility(recordingInProgress, binding.btnStartPause);
                 showProgressBar();
             }
 
@@ -1500,7 +1568,7 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
 
                 }
             });
-            mTask.unpause();
+            mTask.unPause();
             mTask.killReader();
             mTask = null;
         } else {
@@ -1512,14 +1580,11 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
     }
 
     void hideProgressBar() {
-        binding.mainDarkProgressBar.setVisibility(View.GONE);
-        binding.mainLightProgressBar.setVisibility(View.GONE);
+        binding.refresh.setRefreshing(false);
     }
 
     private void showProgressBar() {
-        ColorScheme colorScheme = PreferenceHelper.getColorScheme(LogcatActivity.this);
-        binding.mainDarkProgressBar.setVisibility(colorScheme.isUseLightProgressBar() ? View.GONE : View.VISIBLE);
-        binding.mainLightProgressBar.setVisibility(colorScheme.isUseLightProgressBar() ? View.VISIBLE : View.GONE);
+        binding.refresh.setRefreshing(true);
     }
 
 
@@ -1582,7 +1647,6 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
         mLogListAdapter.setClickListener(this);
 
         binding.list.setAdapter(mLogListAdapter);
-
         binding.list.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -1688,16 +1752,30 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
         mSearchingString = filterText;
     }
 
-    private void pauseOrUnpause(MenuItem item) {
+//    private void pauseOrUnpause(MenuItem item) {
+//        LogReaderAsyncTask currentTask = mTask;
+//
+//        if (currentTask != null) {
+//            if (currentTask.isPaused()) {
+//                currentTask.unPause();
+//                item.setIcon(R.drawable.ic_pause_white_24dp);
+//            } else {
+//                currentTask.pause();
+//                item.setIcon(R.drawable.ic_play_arrow_white_24dp);
+//            }
+//        }
+//    }
+
+    private void pauseOrUnpause(ImageButton item) {
         LogReaderAsyncTask currentTask = mTask;
 
         if (currentTask != null) {
             if (currentTask.isPaused()) {
-                currentTask.unpause();
-                item.setIcon(R.drawable.ic_pause_white_24dp);
+                currentTask.unPause();
+                item.setImageResource(R.drawable.ic_pause_white_24dp);
             } else {
                 currentTask.pause();
-                item.setIcon(R.drawable.ic_play_arrow_white_24dp);
+                item.setImageResource(R.drawable.ic_play_arrow_white_24dp);
             }
         }
     }
@@ -1900,7 +1978,7 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
 
         private void doWhenFinished() {
             if (mPaused) {
-                unpause();
+                unPause();
             }
             if (mOnFinishedRunnable != null) {
                 mOnFinishedRunnable.run();
@@ -1913,7 +1991,7 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
             }
         }
 
-        public void unpause() {
+        public void unPause() {
             synchronized (mLock) {
                 mPaused = false;
                 mLock.notify();

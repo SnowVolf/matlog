@@ -29,6 +29,6 @@ public class NonnegativeIntegerEditTextPreference extends MaterialEditTextPrefer
     }
 
     private void setUpEditText() {
-        getEditText().setKeyListener(DigitsKeyListener.getInstance(false, false));
+        getEditText().setKeyListener(DigitsKeyListener.getInstance("0123456789"));
     }
 }

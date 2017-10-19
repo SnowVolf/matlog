@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <dimen name="text_size_xsmall">8px</dimen>
     <dimen name="text_size_small">10px</dimen>
     <dimen name="text_size_medium">12px</dimen>
@@ -13,4 +13,8 @@
     <dimen name="main_button_width">52dp</dimen>
 
     <dimen name="fab_compat_margin">0dp</dimen>
+
+    <dimen name="fast_scroll_default_thickness">8dp</dimen>
+    <dimen name="fast_scroll_minimum_range">50dp</dimen>
+    <dimen name="fast_scroll_margin">0dp</dimen>
 </resources>

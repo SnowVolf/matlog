@@ -72,7 +72,10 @@ public class ServiceHelper {
         ComponentName componentName = new ComponentName(context.getPackageName(), serviceName);
 
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-
+        /**
+         *  Starting with Android O,
+         *  {@link ActivityManager#getRunningServices(int)} returns only local app services
+         * */
         List<ActivityManager.RunningServiceInfo> procList = activityManager.getRunningServices(Integer.MAX_VALUE);
 
         if (procList != null) {

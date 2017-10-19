@@ -15,6 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.MatLog">
 
+        <!-- base app activity -->
+        <activity android:name=".ui.BaseActivity"/>
+
         <!--TODO: REMOVE THIS CONFIGCHANGES ATROCITY-->
         <activity
             android:name=".ui.LogcatActivity"
@@ -33,19 +36,19 @@
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts"/>
+
+            <!-- support 18:9 screens (Galaxy S8, LG G6, etc.) -->
+            <meta-data
+                android:name="android.max_aspect"
+                android:value="2.1"/>
         </activity>
 
-        <activity
-            android:name=".ui.AboutDialogActivity"
-            android:theme="@style/Theme.MatLog.AlertDialog"/>
-
-
-        <activity
-            android:name=".ui.RecordLogDialogActivity"
-            android:theme="@style/Theme.MatLog.AlertDialog"/>
-
-
-        <activity android:name=".ui.SettingsActivity"/>
+        <activity android:name=".ui.SettingsActivity">
+            <!-- support 18:9 screens (Galaxy S8, LG G6, etc.) -->
+            <meta-data
+                android:name="android.max_aspect"
+                android:value="2.1"/>
+        </activity>
 
         <service android:name="com.pluscubed.logcat.LogcatRecordingService"/>
 

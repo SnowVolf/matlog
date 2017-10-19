@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
+import com.pluscubed.logcat.App;
 import com.pluscubed.logcat.R;
 import com.pluscubed.logcat.data.ColorScheme;
 import com.pluscubed.logcat.util.StringUtil;
@@ -43,7 +44,7 @@ public class PreferenceHelper {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         Editor editor = sharedPrefs.edit();
         editor.putBoolean(context.getString(R.string.pref_ran_jellybean_su_update), true);
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -76,9 +77,7 @@ public class PreferenceHelper {
             editor.putBoolean(widgetExists, true);
         }
 
-        editor.commit();
-
-
+        editor.apply();
     }
 
     public static int getDisplayLimitPreference(Context context) {
@@ -121,7 +120,7 @@ public class PreferenceHelper {
 
         editor.putString(context.getText(R.string.pref_display_limit).toString(), Integer.toString(value));
 
-        editor.commit();
+        editor.apply();
     }
 
     public static void setLogLinePeriodPreference(Context context, int value) {
@@ -130,7 +129,7 @@ public class PreferenceHelper {
 
         editor.putString(context.getText(R.string.pref_log_line_period).toString(), Integer.toString(value));
 
-        editor.commit();
+        editor.apply();
     }
 
     public static char getDefaultLogLevelPreference(Context context) {
@@ -161,15 +160,15 @@ public class PreferenceHelper {
                     context.getText(R.string.text_size_medium_value).toString());
 
             if (textSizePref.equals(context.getText(R.string.text_size_xsmall_value))) {
-                cacheTextsize(context, R.dimen.text_size_xsmall);
+                cacheTextSize(context, R.dimen.text_size_xsmall);
             } else if (textSizePref.equals(context.getText(R.string.text_size_small_value))) {
-                cacheTextsize(context, R.dimen.text_size_small);
+                cacheTextSize(context, R.dimen.text_size_small);
             } else if (textSizePref.equals(context.getText(R.string.text_size_medium_value))) {
-                cacheTextsize(context, R.dimen.text_size_medium);
+                cacheTextSize(context, R.dimen.text_size_medium);
             } else if (textSizePref.equals(context.getText(R.string.text_size_large_value))) {
-                cacheTextsize(context, R.dimen.text_size_large);
+                cacheTextSize(context, R.dimen.text_size_large);
             } else { // xlarge
-                cacheTextsize(context, R.dimen.text_size_xlarge);
+                cacheTextSize(context, R.dimen.text_size_xlarge);
             }
         }
 
@@ -177,7 +176,7 @@ public class PreferenceHelper {
 
     }
 
-    private static void cacheTextsize(Context context, int dimenId) {
+    private static void cacheTextSize(Context context, int dimenId) {
 
         float unscaledSize = context.getResources().getDimension(dimenId);
 
@@ -240,16 +239,16 @@ public class PreferenceHelper {
 
     }
 
-    public static void setColorScheme(Context context, ColorScheme colorScheme) {
-
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Editor editor = sharedPrefs.edit();
-
-        editor.putString(context.getString(R.string.pref_theme), context.getText(colorScheme.getNameResource()).toString());
-
-        editor.apply();
-
-    }
+//    public static void setColorScheme(Context context, ColorScheme colorScheme) {
+//
+//        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+//        Editor editor = sharedPrefs.edit();
+//
+//        editor.putString(context.getString(R.string.pref_theme), context.getText(colorScheme.getNameResource()).toString());
+//
+//        editor.apply();
+//
+//    }
 
     public static List<String> getBuffers(Context context) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -262,32 +261,32 @@ public class PreferenceHelper {
         return Arrays.asList(StringUtil.split(value, MultipleChoicePreference.DELIMITER));
     }
 
-    public static List<String> getBufferNames(Context context) {
-        List<String> buffers = getBuffers(context);
+//    public static List<String> getBufferNames(Context context) {
+//        List<String> buffers = getBuffers(context);
+//
+//        List<String> bufferNames = new ArrayList<>();
+//
+//        // TODO: this is inefficient - O(n^2)
+//        for (String buffer : buffers) {
+//            int idx = Arrays.asList(context.getResources().getStringArray(
+//                    R.array.pref_buffer_choice_values)).indexOf(buffer);
+//            bufferNames.add(context.getResources().getStringArray(R.array.pref_buffer_choices)[idx]);
+//        }
+//        return bufferNames;
+//    }
 
-        List<String> bufferNames = new ArrayList<>();
-
-        // TODO: this is inefficient - O(n^2)
-        for (String buffer : buffers) {
-            int idx = Arrays.asList(context.getResources().getStringArray(
-                    R.array.pref_buffer_choice_values)).indexOf(buffer);
-            bufferNames.add(context.getResources().getStringArray(R.array.pref_buffer_choices)[idx]);
-        }
-        return bufferNames;
-    }
-
-    public static void setBuffer(Context context, int stringResId) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-        String key = context.getString(R.string.pref_buffer);
-        String value = context.getString(stringResId);
-
-        Editor editor = sharedPrefs.edit();
-
-        editor.putString(key, value);
-
-        editor.apply();
-    }
+//    public static void setBuffer(Context context, int stringResId) {
+//        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+//
+//        String key = context.getString(R.string.pref_buffer);
+//        String value = context.getString(stringResId);
+//
+//        Editor editor = sharedPrefs.edit();
+//
+//        editor.putString(key, value);
+//
+//        editor.apply();
+//    }
 
     public static boolean getIncludeDeviceInfoPreference(Context context) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -306,5 +305,9 @@ public class PreferenceHelper {
     public static boolean isScrubberEnabled(Context context) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPrefs.getBoolean("scrubber", false);
+    }
+
+    public static boolean isFastScrollEnabled(){
+        return App.ctx().getPreferences().getBoolean(App.getContext().getString(R.string.pref_fast_scroller), true);
     }
 }

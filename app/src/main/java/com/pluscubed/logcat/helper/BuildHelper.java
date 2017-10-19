@@ -45,9 +45,6 @@ public class BuildHelper {
             Object value = field.get(null);
             String key = clazz.getSimpleName().toLowerCase() + "." + buildField.toLowerCase();
             keysToValues.put(key, String.valueOf(value));
-        } catch (SecurityException | NoSuchFieldException | IllegalAccessException e) {
-            // ignore
-        }
+        } catch (SecurityException | NoSuchFieldException | IllegalAccessException ignore) {}
     }
-
 }

@@ -1,6 +1,5 @@
 package com.pluscubed.logcat.data;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.pluscubed.logcat.reader.ScrubberUtils;
@@ -14,6 +13,10 @@ import java.util.regex.Pattern;
 public class LogLine {
 
     private static final int TIMESTAMP_LENGTH = 19;
+    // simple sample:
+    // "D/SUKA (6163): "
+    // difficult sample:
+    // "D/SUKA/BLYAD (6163): "
 
     private static Pattern logPattern = Pattern.compile(
             // log level
@@ -49,7 +52,7 @@ public class LogLine {
 
         // if the first char is a digit, then this starts out with a timestamp
         // otherwise, it's a legacy log or the beginning of the log output or something
-        if (!TextUtils.isEmpty(originalLine)
+        if (originalLine.isEmpty()
                 && Character.isDigit(originalLine.charAt(0))
                 && originalLine.length() >= TIMESTAMP_LENGTH) {
             String timestamp = originalLine.substring(0, TIMESTAMP_LENGTH - 1);

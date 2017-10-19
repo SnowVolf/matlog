@@ -155,7 +155,7 @@
     <string name="pref_theme_choice_tmobile_name">T-Mo</string>
     <string name="pref_theme_choice_verizon_name">Big Red</string>
     <string name="pref_theme_summary_free">Requires donate version.</string>
-    <string name="pref_theme_title">Color Scheme</string>
+    <string name="pref_scheme_title">Color Scheme</string>
 
     <string name="record_log">Record Log</string>
 
@@ -232,5 +232,14 @@
     <string name="search">Search</string>
     <string name="scrubber">Omit sensitive info</string>
     <string name="scrubber_summary">Omit sensitive info like web urls, phone numbers or emails</string>
+    <string name="pref_main_theme" translatable="false">main_theme</string>
+
+    <string name="pref_app_theme_light">Light</string>
+    <string name="pref_app_theme_dark">Dark</string>
+    <string name="pref_app_theme_black">Black</string>
+    <string name="pref_theme_title">Theme</string>
+    <string name="copy_msg_to_clipboard">Copy message</string>
+    <string name="pref_fast_scroller" translatable="false">fast_scroller</string>
+    <string name="fast_scroller">Fast Scroller</string>
 
 </resources>

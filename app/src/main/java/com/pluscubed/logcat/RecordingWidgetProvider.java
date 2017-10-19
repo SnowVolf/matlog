@@ -10,7 +10,7 @@ import com.pluscubed.logcat.helper.DialogHelper;
 import com.pluscubed.logcat.helper.PreferenceHelper;
 import com.pluscubed.logcat.helper.ServiceHelper;
 import com.pluscubed.logcat.helper.WidgetHelper;
-import com.pluscubed.logcat.ui.RecordLogDialogActivity;
+import com.pluscubed.logcat.ui.LogcatActivity;
 import com.pluscubed.logcat.util.UtilLogger;
 
 import java.util.Arrays;
@@ -54,7 +54,8 @@ public class RecordingWidgetProvider extends AppWidgetProvider {
                 } else {
                     // start a new recording process
                     Intent targetIntent = new Intent();
-                    targetIntent.setClass(context, RecordLogDialogActivity.class);
+                    targetIntent.setClass(context, LogcatActivity.class);
+                    targetIntent.putExtra("shortcut_action", "record");
                     targetIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_MULTIPLE_TASK
                             | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
